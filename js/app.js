@@ -1,6 +1,6 @@
 
 /*
- *  Copyright 2018-2023 Felix Garcia Carballeira, Alejandro Calderon Mateos, Diego Camarmas Alonso
+ *  Copyright 2018-2024 Felix Garcia Carballeira, Alejandro Calderon Mateos, Diego Camarmas Alonso
  *
  *  This file is part of CREATOR.
  *
@@ -342,8 +342,10 @@ try
       //Flash
       //
 
-      target_ports: { Win: 'COM1', Mac: '/dev/cu.usbserial-210', Linux: '/dev/ttyUSB0' }, //TODO: include into flash component - modal info
-      target_board: "esp32c3", //TODO: include into flash component - modal info
+      lab_url: "",
+      result_email: "",
+      target_ports: { Win: 'rfc2217://host.docker.internal:4000?ign_set_control', Mac: '/dev/cu.usbserial-210', Linux: '/dev/ttyUSB0' }, //TODO: include into flash component - modal info
+      target_board: "", //TODO: include into flash component - modal info
       target_port: "", //TODO: include into flash component - modal info
       flash_url: "http://localhost:8080", //TODO: include into flash component - modal info
 

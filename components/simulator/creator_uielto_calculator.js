@@ -1,6 +1,6 @@
 
 /*
- *  Copyright 2018-2023 Felix Garcia Carballeira, Diego Camarmas Alonso, Alejandro Calderon Mateos
+ *  Copyright 2018-2024 Felix Garcia Carballeira, Diego Camarmas Alonso, Alejandro Calderon Mateos
  *
  *  file is part of CREATOR.
  *
@@ -242,6 +242,11 @@
 
                             break;
                           case 2:
+                            if ((this.calculator.decimal).indexOf(",") != -1)
+                            {
+                              this.calculator.decimal = (this.calculator.decimal).replace(",", ".");
+                            }
+
                             var float = parseFloat(this.calculator.decimal, 10);
                             var binary;
                             var hexadecimal;
@@ -424,10 +429,10 @@
                     '         <span class="fas fa-long-arrow-alt-down p-1"></span>' +
                     '         <br>' +
                     '         <span class="h5" v-if="calculator.bits == 32">' +
-                    '           2<sup>{{calculator.exponentDec}}-127</sup>   * ' +
+                    '           2<sup v-if="calculator.exponent == \'\' || calculator.exponent != 0">{{calculator.exponentDec}}-127</sup><sup v-if="calculator.exponent != \'\' && calculator.exponent == 0 && calculator.mantissa != 0">{{calculator.exponentDec}}-126</sup>   * ' +
                     '         </span>' +
                     '         <span class="h5" v-if="calculator.bits == 64">' +
-                    '           2<sup>{{calculator.exponentDec}}-1023</sup>   * ' +
+                    '           2<sup v-if="calculator.exponent == \'\' || calculator.exponent != 0">{{calculator.exponentDec}}-1023</sup><sup v-if="calculator.exponent != \'\' && calculator.exponent == 0 && calculator.mantissa != 0">{{calculator.exponentDec}}-1022</sup>   * ' +
                     '         </span>' +
                     '       </b-col>' +
                     '       <b-col lg="4" cols="6" class="p-1">' +

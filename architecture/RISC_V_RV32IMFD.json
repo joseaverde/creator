@@ -1749,9 +1749,9 @@
     {
       "name": "fclass.d",
       "type": "Arithmetic floating point",
-      "signature_definition": "F0 F5 F3 F2",
-      "signature": "fclass.d,INT-Reg,DFP-Reg,cop",
-      "signatureRaw": "fclass.d rd rs1 cop2",
+      "signature_definition": "F0 F5 F3",
+      "signature": "fclass.d,INT-Reg,DFP-Reg",
+      "signatureRaw": "fclass.d rd rs1",
       "co": "1010011",
       "cop": "111000100000001",
       "nwords": 1,
@@ -1811,16 +1811,16 @@
     {
       "name": "fclass.s",
       "type": "Arithmetic floating point",
-      "signature_definition": "F0 F4 F3 F4",
-      "signature": "fclass.s,INT-Reg,SFP-Reg,INT-Reg",
-      "signatureRaw": "fclass.s rd rs1 rd",
+      "signature_definition": "F0 F4 F3",
+      "signature": "fclass.s,INT-Reg,SFP-Reg",
+      "signatureRaw": "fclass.s rd rs1",
       "co": "1010011",
       "cop": "111000000000001",
       "nwords": 1,
       "clk_cycles": 1,
       "fields": [
         {
-          "name": "FCLASS.S",
+          "name": "fclass.s",
           "type": "co",
           "startbit": 6,
           "stopbit": 0
@@ -4369,15 +4369,15 @@
       "name": "fsqrt.d",
       "type": "Arithmetic floating point",
       "signature_definition": "F0 F4 F3",
-      "signature": "FSQRT.D,DFP-Reg,DFP-Reg",
-      "signatureRaw": "FSQRT.D rd rs1",
+      "signature": "fsqrt.d,DFP-Reg,DFP-Reg",
+      "signatureRaw": "fsqrt.d rd rs1",
       "co": "1010011",
       "cop": "010110100000",
       "nwords": 1,
       "clk_cycles": 1,
       "fields": [
         {
-          "name": "FSQRT.D",
+          "name": "fsqrt.d",
           "type": "co",
           "startbit": 6,
           "stopbit": 0
@@ -4409,7 +4409,7 @@
           "stopbit": 7
         }
       ],
-      "definition": "rd = Math.sqrt(rs1);",
+      "definition": "if (rs1 >= 0)\n { rd = Math.sqrt(rs1); }\n else { capi_raise('Square root of a negative number is not allowed.'); }",
       "separated": [
         false,
         false,
@@ -4463,7 +4463,7 @@
           "stopbit": 7
         }
       ],
-      "definition": "rd = Math.sqrt(rs1);",
+      "definition": "if (rs1 >= 0)\n { rd = Math.sqrt(rs1); }\n else { capi_raise('Square root of a negative number is not allowed.'); }",
       "separated": [
         false,
         false,

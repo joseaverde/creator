@@ -1,6 +1,6 @@
 
 /*
- *  Copyright 2018-2023 Felix Garcia Carballeira, Diego Camarmas Alonso, Alejandro Calderon Mateos
+ *  Copyright 2018-2024 Felix Garcia Carballeira, Diego Camarmas Alonso, Alejandro Calderon Mateos
  *
  *  This file is part of CREATOR.
  *
@@ -232,7 +232,7 @@
                         load_binary = false;
                         $("#divAssembly").attr("class", "col-lg-12 col-sm-12");
                         $("#divTags").attr("class", "col-lg-0 col-sm-0");
-                        $("#divTags").hide();
+                        $("#divTags").attr("class", "d-none");
                       },
 
 

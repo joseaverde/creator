@@ -18,7 +18,6 @@ RUN apt update && apt-get install -y \
         vim \
         aha \
         7zip \
-        rar \
         unrar \
         zip \
         unzip
@@ -66,4 +65,4 @@ RUN mv /creator/gateway/${TARGET_BOARD}.zip . && \
 
 #Run web service
 COPY start_gateway.sh .
-ENTRYPOINT ["./start_gateway.sh"]
+CMD ["/usr/bin/sleep","infinity"]

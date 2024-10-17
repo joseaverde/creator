@@ -1,6 +1,6 @@
 
 /*
- *  Copyright 2018-2023 Felix Garcia Carballeira, Diego Camarmas Alonso, Alejandro Calderon Mateos
+ *  Copyright 2018-2024 Felix Garcia Carballeira, Diego Camarmas Alonso, Alejandro Calderon Mateos
  *
  *  This file is part of CREATOR.
  *
@@ -218,6 +218,12 @@
 
                     //Generate new signature
                     this.generate_signature();
+
+                    for (var i = 0; i < this._props.instruction.fields.length; i++)
+                    {
+                      this._props.instruction.fields[i].startbit = parseInt(this._props.instruction.fields[i].startbit);
+                      this._props.instruction.fields[i].stopbit  = parseInt(this._props.instruction.fields[i].stopbit);
+                    }
 
                     Object.assign(architecture.instructions[this._props.index], this._props.instruction);
 

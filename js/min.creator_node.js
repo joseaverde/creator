@@ -1,6 +1,6 @@
 
 /*
- *  Copyright 2018-2023 Felix Garcia Carballeira, Alejandro Calderon Mateos, Diego Camarmas Alonso
+ *  Copyright 2018-2024 Felix Garcia Carballeira, Alejandro Calderon Mateos, Diego Camarmas Alonso
  *
  *  This file is part of CREATOR.
  *
@@ -133,7 +133,7 @@ function register_value_serialize( architecture )
 }
 
 /*
- *  Copyright 2018-2023 Felix Garcia Carballeira, Diego Camarmas Alonso, Alejandro Calderon Mateos
+ *  Copyright 2018-2024 Felix Garcia Carballeira, Diego Camarmas Alonso, Alejandro Calderon Mateos
  *
  *  This file is part of CREATOR.
  *
@@ -174,7 +174,7 @@ function register_value_serialize( architecture )
 
 
 /*
- *  Copyright 2018-2023 Felix Garcia Carballeira, Diego Camarmas Alonso, Alejandro Calderon Mateos
+ *  Copyright 2018-2024 Felix Garcia Carballeira, Diego Camarmas Alonso, Alejandro Calderon Mateos
  *
  *  This file is part of CREATOR.
  *
@@ -449,7 +449,7 @@ function register_value_serialize( architecture )
     if (add_dot_zero)
     {
       var aux_value = value.toString();
-      if (aux_value.indexOf(".") == -1)
+      if (aux_value.indexOf(".") == -1 && Number.isInteger(aux_value))
       {
         print_value = print_value + ".0";
       }
@@ -477,7 +477,7 @@ function register_value_serialize( architecture )
 
 
 /*
- *  Copyright 2018-2023 Felix Garcia Carballeira, Diego Camarmas Alonso, Alejandro Calderon Mateos
+ *  Copyright 2018-2024 Felix Garcia Carballeira, Diego Camarmas Alonso, Alejandro Calderon Mateos
  *
  *  This file is part of CREATOR.
  *
@@ -952,11 +952,25 @@ function creator_callstack_do_transition ( doAction, indexComponent, indexElemen
         var elto = creator_callstack_getTop();
         if (elto.ok == false) {
             console_log('creator_callstack_do_transition: ' + elto.msg) ;
-        return '' ;
+            return '' ;
         }
 
         var equal  = elto.val.register_address_write[indexComponent][indexElement].includes(address); 
         action = (equal) ? "wm==" : "wm!=" ;
+    }
+
+    if (doAction == "rm")
+    {
+        var elto = creator_callstack_getTop();
+        if (elto.ok == false) {
+            console_log('creator_callstack_do_transition: ' + elto.msg) ;
+            return '' ;
+        }
+
+        var equal  = elto.val.register_address_write[indexComponent][indexElement].includes(address);
+        if (equal == false){
+            return
+        }
     }
 
     if ( (typeof(stack_state_transition[state])         === "undefined") ||
@@ -980,7 +994,7 @@ function creator_callstack_do_transition ( doAction, indexComponent, indexElemen
 
 
 /*
- *  Copyright 2018-2023 Felix Garcia Carballeira, Diego Camarmas Alonso, Alejandro Calderon Mateos
+ *  Copyright 2018-2024 Felix Garcia Carballeira, Diego Camarmas Alonso, Alejandro Calderon Mateos
  *
  *  This file is part of CREATOR.
  *
@@ -1531,7 +1545,7 @@ function capi_float2bin ( f )
 }
 
 /*
- *  Copyright 2018-2023 Felix Garcia Carballeira, Diego Camarmas Alonso, Alejandro Calderon Mateos
+ *  Copyright 2018-2024 Felix Garcia Carballeira, Diego Camarmas Alonso, Alejandro Calderon Mateos
  *
  *  This file is part of CREATOR.
  *
@@ -1794,7 +1808,7 @@ function track_stack_reset()
 
 
 /*
- *  Copyright 2018-2023 Felix Garcia Carballeira, Diego Camarmas Alonso, Alejandro Calderon Mateos
+ *  Copyright 2018-2024 Felix Garcia Carballeira, Diego Camarmas Alonso, Alejandro Calderon Mateos
  *
  *  This file is part of CREATOR.
  *
@@ -2105,7 +2119,7 @@ function updateSimple ( comp, elem )
   }
 }
 /*
- *  Copyright 2018-2023 Felix Garcia Carballeira, Diego Camarmas Alonso, Alejandro Calderon Mateos
+ *  Copyright 2018-2024 Felix Garcia Carballeira, Diego Camarmas Alonso, Alejandro Calderon Mateos
  *
  *  This file is part of CREATOR.
  *
@@ -2332,7 +2346,7 @@ function main_memory_write_nbytes ( addr, value, n )
         var value_str = value.toString(16).padStart(2*n, "0") ;
         var chunks    = value_str.match(/.{1,2}/g) ;
 
-        for (var i = 0; i < chunks.length; i++) {
+        for (var i = 0; i < n; i++) {
              main_memory_write_value(addr+i, chunks[i]) ;
         }
 }
@@ -2608,7 +2622,10 @@ function creator_memory_value_by_type ( val, type )
                 case 'b':
                  val = val & 0xFF ;
                  if (val & 0x80)
+                 {
                          val = 0xFFFFFF00 | val ;
+                         val = (val >>> 0)
+                 }
                  break;
 
                 case 'bu':
@@ -2618,7 +2635,10 @@ function creator_memory_value_by_type ( val, type )
                 case 'h':
                  val = val & 0xFFFF ;
                  if (val & 0x8000)
+                 {
                          val = 0xFFFF0000 | val ;
+                         val = (val >>> 0)
+                 }
                  break;
 
                 case 'hu':
@@ -3026,7 +3046,7 @@ function creator_memory_storestring ( string, string_length, data_address, label
 
 
 /*
- *  Copyright 2018-2023 Felix Garcia Carballeira, Diego Camarmas Alonso, Alejandro Calderon Mateos
+ *  Copyright 2018-2024 Felix Garcia Carballeira, Diego Camarmas Alonso, Alejandro Calderon Mateos
  *
  *  This file is part of CREATOR.
  *
@@ -3749,14 +3769,6 @@ function assembly_compiler()
               }
             }
 
-
-
-
-
-
-
-
-
             if (signatureParts[j] == "offset_words")
             {
               for (var z = 0; z < instructions.length && exit === 0; z++)
@@ -3768,9 +3780,6 @@ function assembly_compiler()
                   var stopbit = pending_instructions[i].stopBit;
 
                   addr = ((addr - pending_instructions[i].address)/4)-1;
-                  console_log(instructionParts);
-                  console_log(addr);
-
 
                   if (startbit.length > 1 && stopbit.length)
                   {
@@ -3779,10 +3788,9 @@ function assembly_compiler()
                       fieldsLength = fieldsLength + startbit[s]-stopbit[s]+1;
                     }
 
-                    console_log(fieldsLength);
                     var bin = bi_intToBigInt(addr,10).toString(2);
                     bin = bin.padStart(fieldsLength, "0");
-                    console_log(bin);
+                    bin = bin.slice((bin.length - fieldsLength), bin.length);
 
                     var last_segment = 0;
                     for (var s = 0; s < startbit.length; s++)
@@ -3809,7 +3817,6 @@ function assembly_compiler()
                     console_log(fieldsLength);
                     var bin = bi_intToBigInt(addr,10).toString(2);
                     bin = bin.padStart(fieldsLength, "0");
-                    console_log(bin);
 
                     for (var w = 0; w < instructions.length && exit === 0; w++) {
                       var aux = "0x" + (pending_instructions[i].address).toString(16);
@@ -4185,15 +4192,15 @@ function data_segment_compiler()
                         return packCompileError('m15', token, 'error', "danger") ;
                       }
 
-                      auxTokenString = value[1].padStart(2*architecture.directives[j].size, "0");
+                      auxTokenString = value[1].padStart(2*parseInt(architecture.directives[j].size), "0");
                       if(value[1].length === 0){
                         return packCompileError('m19', token, 'error', "danger") ;
                       }
 
-                      if(auxTokenString.length > 2*architecture.directives[j].size){
+                      if(auxTokenString.length > 2*parseInt(architecture.directives[j].size)){
                         return packCompileError('m18', token, 'error', "danger") ;
                       }
-                      auxTokenString = auxTokenString.substring(auxTokenString.length-(2*architecture.directives[j].size), auxTokenString.length);
+                      auxTokenString = auxTokenString.substring(auxTokenString.length-(2*parseInt(architecture.directives[j].size)), auxTokenString.length);
                     }
                     else
                     {
@@ -4202,16 +4209,16 @@ function data_segment_compiler()
                         return packCompileError('m15', token, 'error', "danger") ;
                       }
                       auxToken = parseInt(token) >>> 0;
-                      auxTokenString = (auxToken.toString(16).substring(auxToken.toString(16).length-2*architecture.directives[j].size, auxToken.toString(16).length)).padStart(2*architecture.directives[j].size, "0");
-                      if (auxTokenString.length > 2*architecture.directives[j].size) {
+                      auxTokenString = (auxToken.toString(16).substring(auxToken.toString(16).length-2*parseInt(architecture.directives[j].size), auxToken.toString(16).length)).padStart(2*parseInt(architecture.directives[j].size), "0");
+                      if (auxTokenString.length > 2*parseInt(architecture.directives[j].size)) {
                         return packCompileError('m18', token, 'error', "danger") ;
                       }
-                      auxTokenString = auxTokenString.substring(auxTokenString.length-(2*architecture.directives[j].size), auxTokenString.length);
+                      auxTokenString = auxTokenString.substring(auxTokenString.length-(2*parseInt(architecture.directives[j].size)), auxTokenString.length);
                     }
 
                     console_log(auxTokenString)
 
-                    var r = creator_memory_data_compiler(data_address, auxTokenString, architecture.directives[j].size, label, (parseInt(auxTokenString, 16) >> 0), "byte") ;
+                    var r = creator_memory_data_compiler(data_address, auxTokenString, parseInt(architecture.directives[j].size), label, (parseInt(auxTokenString, 16) >> 0), "byte") ;
                     if (r.msg != "") {
                       return packCompileError(r.msg, "", 'error', "danger") ;
                     }
@@ -4270,15 +4277,15 @@ function data_segment_compiler()
                         return packCompileError('m15', token, 'error', "danger") ;
                       }
 
-                      auxTokenString = value[1].padStart(2*architecture.directives[j].size, "0");
+                      auxTokenString = value[1].padStart(2*parseInt(architecture.directives[j].size), "0");
 
                       if (value[1].length === 0) {
                         return packCompileError('m19', token, 'error', "danger") ;
                       }
-                      if (auxTokenString.length > 2*architecture.directives[j].size) {
+                      if (auxTokenString.length > 2*parseInt(architecture.directives[j].size)) {
                         return packCompileError('m18', token, 'error', "danger") ;
                       }
-                      auxTokenString = auxTokenString.substring(auxTokenString.length-(2*architecture.directives[j].size), auxTokenString.length);
+                      auxTokenString = auxTokenString.substring(auxTokenString.length-(2*parseInt(architecture.directives[j].size)), auxTokenString.length);
                     }
                     else{
                       var re = new RegExp("[0-9-]{"+token.length+"}","g");
@@ -4286,16 +4293,16 @@ function data_segment_compiler()
                         return packCompileError('m15', token, 'error', "danger") ;
                       }
                       auxToken = parseInt(token) >>> 0;
-                      auxTokenString = (auxToken.toString(16).substring(auxToken.toString(16).length-2*architecture.directives[j].size, auxToken.toString(16).length)).padStart(2*architecture.directives[j].size, "0");
-                      if (auxTokenString.length > 2*architecture.directives[j].size) {
+                      auxTokenString = (auxToken.toString(16).substring(auxToken.toString(16).length-2*parseInt(architecture.directives[j].size), auxToken.toString(16).length)).padStart(2*parseInt(architecture.directives[j].size), "0");
+                      if (auxTokenString.length > 2*parseInt(architecture.directives[j].size)) {
                         return packCompileError('m18', token, 'error', "danger") ;
                       }
-                      auxTokenString = auxTokenString.substring(auxTokenString.length-(2*architecture.directives[j].size), auxTokenString.length);
+                      auxTokenString = auxTokenString.substring(auxTokenString.length-(2*parseInt(architecture.directives[j].size)), auxTokenString.length);
                     }
 
                     console_log(auxTokenString)
 
-                    var r = creator_memory_data_compiler(data_address, auxTokenString, architecture.directives[j].size, label, (parseInt(auxTokenString, 16) >> 0), "half") ;
+                    var r = creator_memory_data_compiler(data_address, auxTokenString, parseInt(architecture.directives[j].size), label, (parseInt(auxTokenString, 16) >> 0), "half") ;
                     if (r.msg != "") {
                         return packCompileError(r.msg, "", 'error', "danger") ;
                     }
@@ -4352,14 +4359,14 @@ function data_segment_compiler()
                         return packCompileError('m15', token, 'error', "danger") ;
                       }
 
-                      auxTokenString = value[1].padStart(2*architecture.directives[j].size, "0");
+                      auxTokenString = value[1].padStart(2*parseInt(architecture.directives[j].size), "0");
                       if(value[1].length == 0){
                         return packCompileError('m19', token, 'error', "danger") ;
                       }
-                      if(auxTokenString.length > 2*architecture.directives[j].size){
+                      if(auxTokenString.length > 2*parseInt(architecture.directives[j].size)){
                         return packCompileError('m18', token, 'error', "danger") ;
                       }
-                      auxTokenString = auxTokenString.substring(auxTokenString.length-(2*architecture.directives[j].size), auxTokenString.length);
+                      auxTokenString = auxTokenString.substring(auxTokenString.length-(2*parseInt(architecture.directives[j].size)), auxTokenString.length);
                     }
                     else{
                       var re = new RegExp("[0-9-]{"+token.length+"}","g");
@@ -4367,16 +4374,16 @@ function data_segment_compiler()
                         return packCompileError('m15', token, 'error', "danger") ;
                       }
                       auxToken = parseInt(token) >>> 0;
-                      auxTokenString = (auxToken.toString(16).substring(auxToken.toString(16).length-2*architecture.directives[j].size, auxToken.toString(16).length)).padStart(2*architecture.directives[j].size, "0");
-                      if(auxTokenString.length > 2*architecture.directives[j].size){
+                      auxTokenString = (auxToken.toString(16).substring(auxToken.toString(16).length-2*parseInt(architecture.directives[j].size), auxToken.toString(16).length)).padStart(2*parseInt(architecture.directives[j].size), "0");
+                      if(auxTokenString.length > 2*parseInt(architecture.directives[j].size)){
                         return packCompileError('m18', token, 'error', "danger") ;
                       }
-                      auxTokenString = auxTokenString.substring(auxTokenString.length-(2*architecture.directives[j].size), auxTokenString.length);
+                      auxTokenString = auxTokenString.substring(auxTokenString.length-(2*parseInt(architecture.directives[j].size)), auxTokenString.length);
                     }
 
                     console_log(auxTokenString);
 
-                    var r = creator_memory_data_compiler(data_address, auxTokenString, architecture.directives[j].size, label, (parseInt(auxTokenString, 16) >> 0), "word") ;
+                    var r = creator_memory_data_compiler(data_address, auxTokenString, parseInt(architecture.directives[j].size), label, (parseInt(auxTokenString, 16) >> 0), "word") ;
                     if (r.msg != "") {
                         return packCompileError(r.msg, "", 'error', "danger") ;
                     }
@@ -4436,14 +4443,14 @@ function data_segment_compiler()
                         return packCompileError('m15', token, 'error', "danger") ;
                       }
 
-                      auxTokenString = value[1].padStart(2*architecture.directives[j].size, "0");
+                      auxTokenString = value[1].padStart(2*parseInt(architecture.directives[j].size), "0");
                       if(value[1].length == 0){
                         return packCompileError('m19', token, 'error', "danger") ;
                       }
-                      if(auxTokenString.length > 2*architecture.directives[j].size){
+                      if(auxTokenString.length > 2*parseInt(architecture.directives[j].size)){
                         return packCompileError('m18', token, 'error', "danger") ;
                       }
-                      auxTokenString = auxTokenString.substring(auxTokenString.length-(2*architecture.directives[j].size), auxTokenString.length);
+                      auxTokenString = auxTokenString.substring(auxTokenString.length-(2*parseInt(architecture.directives[j].size)), auxTokenString.length);
                     }
                     else{
                       var re = new RegExp("[0-9-]{"+token.length+"}","g");
@@ -4451,14 +4458,14 @@ function data_segment_compiler()
                         return packCompileError('m15', token, 'error', "danger") ;
                       }
                       auxToken = parseInt(token) >>> 0;
-                      auxTokenString = (auxToken.toString(16).substring(auxToken.toString(16).length-2*architecture.directives[j].size, auxToken.toString(16).length)).padStart(2*architecture.directives[j].size, "0");
-                      if(auxTokenString.length > 2*architecture.directives[j].size){
+                      auxTokenString = (auxToken.toString(16).substring(auxToken.toString(16).length-2*parseInt(architecture.directives[j].size), auxToken.toString(16).length)).padStart(2*parseInt(architecture.directives[j].size), "0");
+                      if(auxTokenString.length > 2*parseInt(architecture.directives[j].size)){
                         return packCompileError('m18', token, 'error', "danger") ;
                       }
-                      auxTokenString = auxTokenString.substring(auxTokenString.length-(2*architecture.directives[j].size), auxTokenString.length);
+                      auxTokenString = auxTokenString.substring(auxTokenString.length-(2*parseInt(architecture.directives[j].size)), auxTokenString.length);
                     }
 
-                    var r = creator_memory_data_compiler(data_address, auxTokenString, architecture.directives[j].size, label, (parseInt(auxTokenString, 16) >> 0), "double_word") ;
+                    var r = creator_memory_data_compiler(data_address, auxTokenString, parseInt(architecture.directives[j].size), label, (parseInt(auxTokenString, 16) >> 0), "double_word") ;
                     if (r.msg != "") {
                         return packCompileError(r.msg, "", 'error', "danger") ;
                     }
@@ -4533,14 +4540,14 @@ function data_segment_compiler()
                         return packCompileError('m15', token, 'error', "danger") ;
                       }
 
-                      auxTokenString = value[1].padStart(2*architecture.directives[j].size, "0");
+                      auxTokenString = value[1].padStart(2*parseInt(architecture.directives[j].size), "0");
                       if(value[1].length == 0){
                         return packCompileError('m19', token, 'error', "danger") ;
                       }
-                      if(auxTokenString.length > 2*architecture.directives[j].size){
+                      if(auxTokenString.length > 2*parseInt(architecture.directives[j].size)){
                         return packCompileError('m18', token, 'error', "danger") ;
                       }
-                      auxTokenString = auxTokenString.substring(auxTokenString.length-(2*architecture.directives[j].size), auxTokenString.length);
+                      auxTokenString = auxTokenString.substring(auxTokenString.length-(2*parseInt(architecture.directives[j].size)), auxTokenString.length);
                       token = hex2float(token);
                     }
                     else
@@ -4550,16 +4557,16 @@ function data_segment_compiler()
                         return packCompileError('m15', token, 'error', "danger") ;
                       }
                       auxToken = parseFloat(token, 10);
-                      auxTokenString = (bin2hex(float2bin(auxToken))).padStart(2*architecture.directives[j].size, "0");
-                      if(auxTokenString.length > 2*architecture.directives[j].size){
+                      auxTokenString = (bin2hex(float2bin(auxToken))).padStart(2*parseInt(architecture.directives[j].size), "0");
+                      if(auxTokenString.length > 2*parseInt(architecture.directives[j].size)){
                         return packCompileError('m18', token, 'error', "danger") ;
                       }
-                      auxTokenString = auxTokenString.substring(auxTokenString.length-(2*architecture.directives[j].size), auxTokenString.length);
+                      auxTokenString = auxTokenString.substring(auxTokenString.length-(2*parseInt(architecture.directives[j].size)), auxTokenString.length);
                     }
 
                     console_log(auxTokenString);
 
-                    var r = creator_memory_data_compiler(data_address, auxTokenString, architecture.directives[j].size, label, token, "float") ;
+                    var r = creator_memory_data_compiler(data_address, auxTokenString, parseInt(architecture.directives[j].size), label, token, "float") ;
                     if (r.msg != "") {
                         return packCompileError(r.msg, "", 'error', "danger") ;
                     }
@@ -4629,14 +4636,14 @@ function data_segment_compiler()
                         return packCompileError('m15', token, 'error', "danger") ;
                       }
 
-                      auxTokenString = value[1].padStart(2*architecture.directives[j].size, "0");
+                      auxTokenString = value[1].padStart(2*parseInt(architecture.directives[j].size), "0");
                       if (value[1].length == 0) {
                         return packCompileError('m19', token, 'error', "danger") ;
                       }
-                      if (auxTokenString.length > 2*architecture.directives[j].size) {
+                      if (auxTokenString.length > 2*parseInt(architecture.directives[j].size)) {
                         return packCompileError('m18', token, 'error', "danger") ;
                       }
-                      auxTokenString = auxTokenString.substring(auxTokenString.length-(2*architecture.directives[j].size), auxTokenString.length);
+                      auxTokenString = auxTokenString.substring(auxTokenString.length-(2*parseInt(architecture.directives[j].size)), auxTokenString.length);
                       token = hex2double(token);
                     }
                     else{
@@ -4645,16 +4652,16 @@ function data_segment_compiler()
                         return packCompileError('m15', token, 'error', "danger") ;
                       }
                       auxToken = parseFloat(token, 10); console_log(auxTokenString);
-                      auxTokenString = (bin2hex(double2bin(auxToken))).padStart(2*architecture.directives[j].size, "0");
-                      if (auxTokenString.length > 2*architecture.directives[j].size) {
+                      auxTokenString = (bin2hex(double2bin(auxToken))).padStart(2*parseInt(architecture.directives[j].size), "0");
+                      if (auxTokenString.length > 2*parseInt(architecture.directives[j].size)) {
                         return packCompileError('m18', token, 'error', "danger") ;
                       }
-                      auxTokenString = auxTokenString.substring(auxTokenString.length-(2*architecture.directives[j].size), auxTokenString.length);
+                      auxTokenString = auxTokenString.substring(auxTokenString.length-(2*parseInt(architecture.directives[j].size)), auxTokenString.length);
                     }
 
                     console_log(auxTokenString);
 
-                    var r = creator_memory_data_compiler(data_address, auxTokenString, architecture.directives[j].size, label, token, "double") ;
+                    var r = creator_memory_data_compiler(data_address, auxTokenString, parseInt(architecture.directives[j].size), label, token, "double") ;
                     if (r.msg != "") {
                       return packCompileError(r.msg, "", 'error', "danger") ;
                     }
@@ -4829,7 +4836,7 @@ function data_segment_compiler()
                     return packCompileError('m10', token, 'error', "danger") ;
                   }
 
-                  var size = parseInt(token) * architecture.directives[j].size;
+                  var size = parseInt(token) * parseInt(architecture.directives[j].size);
                   data_address = creator_memory_storestring(size, size, data_address, label, "space", align);
 
                   next_token();
@@ -4839,6 +4846,8 @@ function data_segment_compiler()
                   align = 1;
 
                   console_log("space Terminado");
+
+                  j=0;
                   break;
 
                 case "align":
@@ -4871,6 +4880,8 @@ function data_segment_compiler()
                   console_log("token: " + token);
 
                   console_log("align Terminado");
+                  
+                  j=0;
                   break;
 
                 default:
@@ -5392,7 +5403,6 @@ function instruction_compiler ( instruction, userInstruction, label, line, pendi
             console_log("token: " + token);
 
             var validReg = false;
-            var regNum = 0;
 
             for(var a = 0; a < architecture.instructions[i].fields.length; a++){
               if(architecture.instructions[i].fields[a].name == signatureRawParts[j]){
@@ -5400,7 +5410,6 @@ function instruction_compiler ( instruction, userInstruction, label, line, pendi
                   for(var w = 0; w < architecture.components[z].elements.length; w++){
                     if(architecture.components[z].elements[w].name.includes(token) !== false && architecture.components[z].type == "int_registers"){ //TODO:check
                       validReg = true;
-                      regNum++;
 
                       fieldsLength = architecture.instructions[i].fields[a].startbit - architecture.instructions[i].fields[a].stopbit + 1;
                       var reg = w;
@@ -5427,7 +5436,6 @@ function instruction_compiler ( instruction, userInstruction, label, line, pendi
                     else if(z == architecture_hash.length-1 && w == architecture.components[z].elements.length-1 && validReg === false){
                       return packCompileError('m4', token, 'error', "danger") ;
                     }
-                    regNum++;
                   }
                 }
               }
@@ -5454,7 +5462,7 @@ function instruction_compiler ( instruction, userInstruction, label, line, pendi
                         regNum++;
 
                         fieldsLength = architecture.instructions[i].fields[a].startbit - architecture.instructions[i].fields[a].stopbit + 1;
-                        var reg = regNum;
+                        var reg = w;
 
                         if(reg.toString(2).length > fieldsLength){
 
@@ -5483,7 +5491,7 @@ function instruction_compiler ( instruction, userInstruction, label, line, pendi
                         regNum++;
 
                         fieldsLength = architecture.instructions[i].fields[a].startbit - architecture.instructions[i].fields[a].stopbit + 1;
-                        var reg = regNum;
+                        var reg = w;
 
                         if(reg.toString(2).length > fieldsLength){
 
@@ -5530,7 +5538,7 @@ function instruction_compiler ( instruction, userInstruction, label, line, pendi
                         regNum++;
 
                         fieldsLength = architecture.instructions[i].fields[a].startbit - architecture.instructions[i].fields[a].stopbit + 1;
-                        var reg = regNum;
+                        var reg = w;
 
                         if(reg.toString(2).length > fieldsLength){
 
@@ -5557,7 +5565,7 @@ function instruction_compiler ( instruction, userInstruction, label, line, pendi
                         regNum++;
 
                         fieldsLength = architecture.instructions[i].fields[a].startbit - architecture.instructions[i].fields[a].stopbit + 1;
-                        var reg = regNum;
+                        var reg = w;
 
                         if(reg.toString(2).length > fieldsLength){
 
@@ -5600,7 +5608,7 @@ function instruction_compiler ( instruction, userInstruction, label, line, pendi
                       regNum++;
 
                       fieldsLength = architecture.instructions[i].fields[a].startbit - architecture.instructions[i].fields[a].stopbit + 1;
-                      var reg = regNum;
+                      var reg = w;
 
                       if(reg.toString(2).length > fieldsLength){
 
@@ -6722,7 +6730,7 @@ function binaryStringToInt( b ) {
 
 
 /*
- *  Copyright 2018-2023 Felix Garcia Carballeira, Diego Camarmas Alonso, Alejandro Calderon Mateos
+ *  Copyright 2018-2024 Felix Garcia Carballeira, Diego Camarmas Alonso, Alejandro Calderon Mateos
  *
  *  This file is part of CREATOR.
  *
@@ -6958,8 +6966,11 @@ function execute_instruction ( )
                 else{
                   bin = instructionExec.substring(((instruction_nwords*31) - instruction_fields[f].startbit), ((instruction_nwords*32) - instruction_fields[f].stopbit))
                 }
-                value = get_number_binary (bin);
 
+                // value = get_number_binary(bin) ;
+                value     = parseInt(bin, 2).toString(16) ;
+                value_len = Math.abs(instruction_fields[f].startbit - instruction_fields[f].stopbit) ;
+                value     = '0x' + value.padStart(value_len/4, '0') ;
                 break; 
 
               default:
@@ -7043,7 +7054,7 @@ function execute_instruction ( )
       var var_readings_definitions_name = {};
       var var_writings_definitions      = {};
 
-      //Generate all registers, values, etc. readings
+      // Generate all registers, values, etc. readings
       for (var i = 1; i < signatureRawParts.length; i++)
       {
         if (signatureParts[i] == "INT-Reg" || signatureParts[i] == "SFP-Reg" || signatureParts[i] == "DFP-Reg" || signatureParts[i] == "Ctrl-Reg")
@@ -7073,6 +7084,31 @@ function execute_instruction ( )
           }
         }
         else{
+
+          /////////TODO: inm-signed
+          if ( signatureParts[i] == "offset_words" )
+          {
+            if (instructionExecParts[i].startsWith("0x"))
+            {
+              var value     = parseInt(instructionExecParts[i]);
+              var nbits     = 4 * (instructionExecParts[i].length - 2) ; // 0xFFC -> 12 bits
+              var value_bin = value.toString(2).padStart(nbits, '0') ;   // value_bin = '111111111100'
+
+              // TODO: replace 32 with bits in architecture...
+              if (value_bin[0] == '1') {
+                value_bin = ''.padStart(32 - nbits, '1') + value_bin ;   // value_bin = '1111...111' + '111111111100' ;
+              }
+              else {
+                value_bin = ''.padStart(32 - nbits, '0') + value_bin ;   // value_bin = '0000...000' + '011111111100' ;
+              }
+              value = parseInt(value_bin, 2) >> 0 ;
+              instructionExecParts[i] = value ;
+
+              console_log(instructionExecParts[i]);
+            }
+          }
+          /////////
+
           var_readings_definitions[signatureRawParts[i]] = "var " + signatureRawParts[i] + " = " + instructionExecParts[i] + ";\n";
         }
       }
@@ -7688,8 +7724,9 @@ function get_number_binary (bin)
 {
   return "0x" + bin2hex(bin);
 }
+
 /*
- *  Copyright 2018-2023 Felix Garcia Carballeira, Diego Camarmas Alonso, Alejandro Calderon Mateos
+ *  Copyright 2018-2024 Felix Garcia Carballeira, Diego Camarmas Alonso, Alejandro Calderon Mateos
  *
  *  This file is part of CREATOR.
  *

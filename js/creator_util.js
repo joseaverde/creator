@@ -1,6 +1,6 @@
 
 /*
- *  Copyright 2018-2023 Felix Garcia Carballeira, Diego Camarmas Alonso, Alejandro Calderon Mateos
+ *  Copyright 2018-2024 Felix Garcia Carballeira, Diego Camarmas Alonso, Alejandro Calderon Mateos
  *
  *  This file is part of CREATOR.
  *
@@ -275,7 +275,7 @@
     if (add_dot_zero)
     {
       var aux_value = value.toString();
-      if (aux_value.indexOf(".") == -1)
+      if (aux_value.indexOf(".") == -1 && Number.isInteger(aux_value))
       {
         print_value = print_value + ".0";
       }

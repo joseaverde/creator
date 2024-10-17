@@ -1,6 +1,6 @@
 
 /*
- *  Copyright 2018-2023 Felix Garcia Carballeira, Diego Camarmas Alonso, Alejandro Calderon Mateos
+ *  Copyright 2018-2024 Felix Garcia Carballeira, Diego Camarmas Alonso, Alejandro Calderon Mateos
  *
  *  This file is part of CREATOR.
  *
@@ -278,8 +278,8 @@
                       //New field
                       var new_field = { name: this.instruction.fields[i].name, 
                                         type: this.instruction.fields[i].type,
-                                        startbit: this.instruction.fields[i].startbit,
-                                        stopbit: this.instruction.fields[i].stopbit,
+                                        startbit: parseInt(this.instruction.fields[i].startbit),
+                                        stopbit: parseInt(this.instruction.fields[i].stopbit),
                                         field_value: this.instruction.fields[i].valueField
                                       };
 
